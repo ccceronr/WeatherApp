@@ -1,7 +1,7 @@
 import { useState } from "react";
 import WeatherBackground from "./components/WeatherBackground";
 import { useEffect } from "react";
-import { convertTemperature } from "./components/Helper";
+import { HumidityIcon, SunriseIcon, SunsetIcon, VisibilityIcon, WindIcon } from "./components/Icons";
 
 const App = () => {
   const [weather, setWeather] = useState(null);
@@ -71,6 +71,28 @@ const App = () => {
         Date.now() / 1000 > weather.sys.sunrise &&
         Date.now() / 1000 < weather.sys.sunset,
     };
+
+  const convertTemperature = (temp, unit) => {
+    if (unit === 'C') return Math.round(temp);
+    return Math.round((temp * 9/5) + 32);
+  };
+
+  const getHumidityValue = (humidity) => {
+    if (humidity < 30) return 'Low';
+    if (humidity < 60) return 'Moderate';
+    return 'High';
+  };
+
+  const getWindDirection = (degrees) => {
+    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    const index = Math.round(((degrees || 0) % 360) / 45) % 8;
+    return directions[index];
+  };
+
+  const getVisibilityValue = (visibility) => {
+    const km = (visibility / 1000).toFixed(1);
+    return `${km} km`;
+  };
 
   return (
     <div className=" min-h-screen">
@@ -151,8 +173,51 @@ const App = () => {
               </p>
               <p className=" capitalize">{weather.weather[0].description}</p>
 
-              <div className=' flex flex-wrap justify-around mt-6 gap-4'>
+              <div className=" flex flex-wrap justify-around mt-6 gap-4">
+                {[
+                  [
+                    HumidityIcon,
+                    "Humidity",
+                    `${weather.main.humidity}%
+                    (${getHumidityValue(weather.main.humidity)})`
+                  ],
 
+                 [
+                    WindIcon,
+                    "Wind",
+                    `${weather.wind.speed} m/s ${weather.wind.deg ?
+                    `(${getWindDirection(weather.wind.deg)})` : ''}`
+                  ],
+
+                  [
+                    VisibilityIcon,
+                    "Visibility",
+                    getVisibilityValue(weather.visibility) 
+                  ]].map(([IconComp, label, value]) => (
+                  <div key={label} className=' flex flex-col items-center m-2'>
+                    <IconComp />
+                    <p className=' mt-1 font-semibold'>{label}</p>
+                    <p className=' text-sm'>{value}</p>
+                  </div>
+                ))}
+              </div>
+              <div className=' flex flex-wrap justify-around mt-6'>
+                {[
+                  [SunriseIcon, 'Sunrise', weather.sys.sunrise],
+                  [SunsetIcon, 'Sunset', weather.sys.sunset]
+                ].map(([Icon, label, time]) => (
+                  <div key={label} className=' flex flex-col items-center m-2'>
+                    <Icon />
+                    <p className=' mt-1 font-semibold'>{label}</p>
+                    <p className=' text-sm'>
+                      {new Date(time * 1000).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
+                ))}
+               
               </div>
             </div>
           )}
