@@ -115,7 +115,7 @@ const App = () => {
                 className="mb-4 p-3 rounded border border-white bg-transparent text-white placeholder-white focus:outline-none focus:border-blue-300 transition duration-300"
               />
               {suggestions.length > 0 && (
-                <div className="absolute top-12 left-0 right-0 bg-transparent shadow-md rounded z-10">
+                <div className="absolute top-12 left-0 right-0 bg-white text-black shadow-md rounded z-10">
                   {suggestions.map((s) => (
                     <button
                       type="button"
@@ -217,9 +217,19 @@ const App = () => {
                     </p>
                   </div>
                 ))}
-               
+               <div className=' mt-6 text-sm text-center w-full'>
+                <p><strong>Feels like:</strong>{convertTemperature(weather.main.feels_like, unit)}&deg;{unit}</p>
+                <p><strong>Pressure:</strong> {weather.main.pressure} hPa</p>
+
+               </div>
               </div>
             </div>
+          )}
+
+          {error && (
+            <p className=" mt-4 text-red-500 font-semibold text-center">
+              {error}
+            </p>
           )}
         </div>
       </div>

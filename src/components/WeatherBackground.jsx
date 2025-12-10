@@ -31,7 +31,7 @@ const WeatherBackground = ({ condition }) => {
     const asset = gifs[weatherType] || gifs.default;
 
     if (!asset) return gifs.default;
-    if (typeof async === "object")
+    if (typeof asset === "object")
       return condition.isDay ? asset.day : asset.night;
 
     return asset;
@@ -45,7 +45,7 @@ const WeatherBackground = ({ condition }) => {
         <source src={video} type="video/mp4" />
       </video>
     ) : (
-      <img src={background} alt="Weather Background" className='w-full h-full object-cover opacity-20 pointer-events-none animate-fade-in'/>
+      <img src={background} alt="Weather Background" className='w-full h-full object-cover opacity-60 pointer-events-none animate-fade-in'/>
     )}
     <div className='absolute inset-0 bg-black/30'/>
   </div>
