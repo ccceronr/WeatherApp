@@ -8,7 +8,7 @@ const App = () => {
   const [city, setCity] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [unit, setUnit] = useState("C");
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const API_KEY = import.meta.env.VITE_API_KEY;
   //https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
@@ -17,9 +17,9 @@ const App = () => {
 
   useEffect(() => {
     if (city.trim().length >= 3 && !weather) {
-      const timer = setTimeout(() => fetchSuggestions(city),500);
+      const timer = setTimeout(() => fetchSuggestions(city), 500);
       return () => clearTimeout(timer);
-    } 
+    }
     setSuggestions([]);
   }, [city, weather]);
 
@@ -31,38 +31,38 @@ const App = () => {
         `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`
       );
       response.ok ? setSuggestions(await response.json()) : setSuggestions([]);
-    }
-    catch {
+    } catch {
       setSuggestions([]);
     }
-  }
+  };
 
   //THIS WILL FETCH THE WEATHER DATA FROM URL
-  const fetchWeatherData = async (url, name='') => {
-    setError('');
+  const fetchWeatherData = async (url, name = "") => {
+    setError("");
     setWeather(null);
-    
+
     try {
       const response = await fetch(url);
-      if (!response.ok) throw new Error((await response.json()).message || 'City not found')
+      if (!response.ok)
+        throw new Error((await response.json()).message || "City not found");
       const data = await response.json();
       setWeather(data);
       setCity(name || data.name);
       setSuggestions([]);
-    }
-    catch (err) {
+    } catch (err) {
       setError(err.message);
     }
-  }
+  };
 
   //THIS FUNCTION PREVENTS FORM SUBMISSION, VALIDATES CITY INPUT, AND FETCH DATA VIA API
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!city.trim()) return setError('Please enter a valid city or country name.');
+    if (!city.trim())
+      return setError("Please enter a valid city or country name.");
     await fetchWeatherData(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city.trim()}&appid=${API_KEY}&units=metric`,
-    )
-  }
+      `https://api.openweathermap.org/data/2.5/weather?q=${city.trim()}&appid=${API_KEY}&units=metric`
+    );
+  };
 
   const getWeatherCondition = () =>
     weather && {
@@ -84,7 +84,7 @@ const App = () => {
           <h1 className=" text-4xl font-extrabold text-center mb-6">
             Weather App
           </h1>
-          {weather ? (
+          {!weather ? (
             <form onSubmit={handleSearch} className=" flex flex-col relative">
               <input
                 value={city}
@@ -141,12 +141,19 @@ const App = () => {
                   &deg;{unit}
                 </button>
               </div>
-              <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={weather.weather[0].description}
-              className=' mx-auto my-4 animate-bounce' />
-              <p className='text-4xl'>
+              <img
+                src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                alt={weather.weather[0].description}
+                className=" mx-auto my-4 animate-bounce"
+              />
+              <p className="text-4xl">
                 {convertTemperature(weather.main.temp, unit)}&deg;{unit}
               </p>
-              
+              <p className=" capitalize">{weather.weather[0].description}</p>
+
+              <div className=' flex flex-wrap justify-around mt-6 gap-4'>
+
+              </div>
             </div>
           )}
         </div>
